@@ -19,6 +19,11 @@ Market orders provide immediate execution at current market prices, demonstratin
 - PostgreSQL (order history)
 - Mock DEX implementation
 
+## Deployment
+
+The app is hosted at the following URL:
+`http://20.193.146.161/`
+
 ## Setup
 
 ### Local Development
