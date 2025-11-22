@@ -8,6 +8,11 @@ import IORedis from 'ioredis';
 const repo = new OrderRepository();
 
 export async function routes(fastify: FastifyInstance) {
+
+  // Health Check Endpoint
+  fastify.get('/', async (request, reply) => {
+    return { message: 'System is running', status: 'ok' };
+  });
   
   // POST /api/orders/execute
   fastify.post('/api/orders/execute', {
