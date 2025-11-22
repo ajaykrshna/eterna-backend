@@ -21,6 +21,8 @@ Market orders provide immediate execution at current market prices, demonstratin
 
 ## Setup
 
+### Local Development
+
 1. Install dependencies:
 ```bash
 pnpm install
@@ -37,6 +39,33 @@ pnpm dev
 ```
 
 Server runs at `http://localhost:3000`
+
+### Docker
+
+1. Copy the example environment file:
+```bash
+cp .env.prod.example .env.prod
+```
+
+2. Edit `.env.prod` with your production credentials
+
+3. Start all services (Redis, PostgreSQL, App):
+```bash
+docker-compose up
+```
+
+4. Stop services:
+```bash
+docker-compose down
+```
+
+Server runs at `http://localhost:3000`
+
+**Environment Variables:**
+- `.env.dev` - Local development (committed to git)
+- `.env.prod.example` - Example template (committed to git)
+- `.env.prod` - Production secrets (gitignored, never committed)
+- Docker reads from `.env.prod` file via `env_file` in docker-compose.yml
 
 ## API Endpoints
 
