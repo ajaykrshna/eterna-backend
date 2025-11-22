@@ -1,0 +1,36 @@
+services:
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - redis_data:/data
+    networks:
+      - eterna-network
+
+  postgres:
+    image: postgres:15-alpine
+    env_file:
+      - .env.prod
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - eterna-network
+
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env.prod
+    depends_on:
+      - redis
+      - postgres
+    networks:
+      - eterna-network
+
+volumes:
+  redis_data:
+  postgres_data:
+
+networks:
+  eterna-network:
+    driver: bridge
