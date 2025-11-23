@@ -164,7 +164,6 @@ export async function routes(fastify: FastifyInstance) {
         if (data.status === 'confirmed' || data.status === 'failed') {
           setTimeout(() => {
             socket.close();
-            subClient.quit();
           }, 1000);
         }
       } catch (err) {
