@@ -1,4 +1,4 @@
-import { IDexRouter } from '../domain/types';
+import { IDexRouter } from "../domain/types";
 
 export class MockDexRouter implements IDexRouter {
   private readonly BASE_PRICE = 100; // Simulated base price
@@ -17,18 +17,18 @@ export class MockDexRouter implements IDexRouter {
     };
   }
 
-  async executeSwap(dex: string, orderId: string) {
+  async executeSwap(dex: string, orderId: string, executionPrice: number) {
     // Simulate 2-3 second execution
     await this.sleep(2000 + Math.random() * 1000);
 
     // Random failure simulation for retry logic
     if (Math.random() < 0.1) {
-      throw new Error('Simulated RPC Timeout');
+      throw new Error("Simulated RPC Timeout");
     }
 
     return {
       txHash: `tx_${Math.random().toString(36).substring(7)}`,
-      price: this.BASE_PRICE,
+      price: executionPrice,
     };
   }
 }

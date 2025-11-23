@@ -48,13 +48,15 @@ export const startWorker = () => {
           decision: `Selected ${selectedDex} (Best Liquidity/Price)`
         });
 
+        const executionPrice = selectedDex === 'raydium' ? quotes.raydium : quotes.meteora;
+
         await notify(orderId, 'building', { message: 'Constructing transaction...' });
         // Simulate build time
         await new Promise(r => setTimeout(r, 500));
 
         await notify(orderId, 'submitted', { message: 'Sent to Solana network...' });
 
-        const result = await router.executeSwap(selectedDex, orderId);
+        const result = await router.executeSwap(selectedDex, orderId, executionPrice);
 
 
         await notify(orderId, 'confirmed', {

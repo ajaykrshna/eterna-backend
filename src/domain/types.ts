@@ -25,5 +25,5 @@ export interface IDexRouter {
     raydium: number;
     meteora: number;
   }>;
-  executeSwap(dex: 'raydium' | 'meteora', orderId: string): Promise<{ txHash: string; price: number }>;
+  executeSwap(dex: 'raydium' | 'meteora', orderId: string, executionPrice: number): Promise<{ txHash: string; price: number }>;
 }
