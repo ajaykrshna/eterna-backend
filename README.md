@@ -5,6 +5,7 @@ Order execution engine for Solana DEX trading with real-time WebSocket updates a
 ## Order Type Selection: Market Orders
 
 **Why Market Orders?**
+
 Market orders provide immediate execution at current market prices, demonstrating core routing logic, queue management, and real-time updates without the complexity of price monitoring or timing precision.
 
 **Extension Strategy:**
@@ -110,3 +111,70 @@ ws://localhost:3000/ws/orders/{orderId}
 **Database Strategy**
 - PostgreSQL for audit log with graceful degradation if unavailable
 - Redis for real-time updates, PostgreSQL for history
+
+## Architecture Diagram
+
+```mermaid
+flowchart TD
+
+    %% =========================
+    %% Client Layer
+    %% =========================
+    subgraph CLIENT["Client Layer"]
+        HTTP[HTTP Client]
+        WS[WebSocket Client]
+    end
+
+    HTTP -->|POST /api/orders/execute| API_HTTP
+    WS -->|ws://.../:orderId| API_WS
+
+    %% =========================
+    %% API Layer
+    %% =========================
+    subgraph API["API Layer - Fastify"]
+        API_HTTP[HTTP Routes]
+        API_WS[WebSocket Handler]
+    end
+
+    API_HTTP -->|1. Create Order| ORDER_QUEUE
+    API_HTTP -->|2. Queue Job| ORDER_QUEUE
+    API_WS -->|3. Subscribe to Updates| ORDER_WORKER
+
+    %% =========================
+    %% Service Layer
+    %% =========================
+    subgraph SERVICE["Service Layer"]
+        subgraph QUEUE["OrderQueue - BullMQ"]
+            QM1[Job Management]
+            QM2[Retry Logic]
+            QM3[Concurrency Control]
+        end
+        ORDER_QUEUE[Order Queue]
+        ORDER_WORKER[Order Worker - Processes Jobs, Routes to DEX, Emits Status Updates]
+    end
+
+    ORDER_QUEUE --> ORDER_WORKER
+
+    %% =========================
+    %% Infrastructure Layer
+    %% =========================
+    subgraph INFRA["Infrastructure Layer"]
+        DEX[Mock Dex Router - Route Selection & Execution]
+        REPO[Order Repository - Persistence & History]
+    end
+
+    ORDER_WORKER -->|Execute Trade| DEX
+    ORDER_WORKER --> REPO
+
+    %% =========================
+    %% Data Layer
+    %% =========================
+    subgraph DATA["Data Layer"]
+        REDIS[Redis - Job Queue & Cache]
+        PG[PostgreSQL - Order History & Audit Log]
+    end
+
+    ORDER_QUEUE --> REDIS
+    REPO --> PG
+
+```
